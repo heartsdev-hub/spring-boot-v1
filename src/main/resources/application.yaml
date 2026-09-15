@@ -1,0 +1,13 @@
+server:
+    port: 5050
+spring:
+  application:
+    name: spring-boot-v1
+  datasource:
+    url: jdbc:postgresql://localhost:5430/spring-boot-db
+    username: postgres
+    password: jack
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
