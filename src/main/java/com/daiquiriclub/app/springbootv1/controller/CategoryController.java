@@ -2,6 +2,7 @@ package com.daiquiriclub.app.springbootv1.controller;
 
 import com.daiquiriclub.app.springbootv1.dto.ApiResult;
 import com.daiquiriclub.app.springbootv1.dto.category.request.CategoryCreateRequest;
+import com.daiquiriclub.app.springbootv1.dto.category.request.CategoryUpdateRequest;
 import com.daiquiriclub.app.springbootv1.dto.category.response.CategoryResponse;
 import com.daiquiriclub.app.springbootv1.service.CategoryService;
 import jakarta.validation.Valid;
@@ -30,5 +31,9 @@ public class CategoryController {
     @PostMapping("/create")
     public ResponseEntity<ApiResult<CategoryResponse>> createCategory(@RequestBody @Valid CategoryCreateRequest categoryCreateRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(categoryCreateRequest));
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResult<CategoryResponse>> updatedCategory (@PathVariable String id, @RequestBody @Valid CategoryUpdateRequest categoryUpdateRequest){
+        return ResponseEntity.ok(categoryService.updateCategory(id,categoryUpdateRequest));
     }
 }

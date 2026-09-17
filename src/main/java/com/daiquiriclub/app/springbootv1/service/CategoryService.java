@@ -2,6 +2,7 @@ package com.daiquiriclub.app.springbootv1.service;
 
 import com.daiquiriclub.app.springbootv1.dto.ApiResult;
 import com.daiquiriclub.app.springbootv1.dto.category.request.CategoryCreateRequest;
+import com.daiquiriclub.app.springbootv1.dto.category.request.CategoryUpdateRequest;
 import com.daiquiriclub.app.springbootv1.dto.category.response.CategoryResponse;
 import com.daiquiriclub.app.springbootv1.entity.Category;
 import com.daiquiriclub.app.springbootv1.exception.BadRequestException;
@@ -29,7 +30,10 @@ public class CategoryService {
                 true,"All Categories",
                 categories
         );
-
+    }
+    public ApiResult<List<CategoryResponse>> getActiveCategories(){
+        List<CategoryResponse> categories = categoryRepository.findByActiveTrue().stream().map(categoryMapper::toCategoryResponse).toList();
+        return new ApiResult<>(true,"All active categories", categories);
     }
     public ApiResult<CategoryResponse> getByIdCategory(String id){
         UUID uuid;
@@ -54,5 +58,18 @@ public class CategoryService {
         return new ApiResult<>(
                 true,"Category created successfully",categoryResponse
         );
+    }
+    public ApiResult<CategoryResponse> updateCategory (String id, CategoryUpdateRequest categoryUpdateRequest){
+        UUID uuid;
+        try{
+            uuid = UUID.fromString(id);
+        }catch (IllegalArgumentException exception){
+            throw new BadRequestException("UUID invalid");
+        }
+        Category category = categoryRepository.findById(uuid).orElseThrow(
+                () -> new ResourceNotFoundException("Category Not Found")
+        );
+        categoryMapper.updateCategory(categoryUpdateRequest,category);
+        return new ApiResult<>(true,"Category updated",categoryMapper.toCategoryResponse(categoryRepository.save(category)));
     }
 }

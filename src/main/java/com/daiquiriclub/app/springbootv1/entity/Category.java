@@ -21,6 +21,7 @@ public class Category {
     private UUID id;
     @Column(unique = true)
     private String name;
+    private boolean active = true;
     @Column(updatable = false)
     private LocalDate created_at;
     private LocalDate updated_at;
