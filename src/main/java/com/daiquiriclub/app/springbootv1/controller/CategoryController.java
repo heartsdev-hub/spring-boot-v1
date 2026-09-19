@@ -36,4 +36,12 @@ public class CategoryController {
     public ResponseEntity<ApiResult<CategoryResponse>> updatedCategory (@PathVariable String id, @RequestBody @Valid CategoryUpdateRequest categoryUpdateRequest){
         return ResponseEntity.ok(categoryService.updateCategory(id,categoryUpdateRequest));
     }
+    @GetMapping("/active")
+    public ResponseEntity<ApiResult<List<CategoryResponse>>>getActiveCategories (){
+        return ResponseEntity.ok(categoryService.getActiveCategories());
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResult<Void>> deleteCategory(@PathVariable String id){
+        return ResponseEntity.ok(categoryService.deleteCategory(id));
+    }
 }
