@@ -23,7 +23,8 @@ public class Product {
     private String name;
     private BigDecimal price;
     private int stock;
-    @ManyToMany
+    private boolean active = true;
+    @ManyToOne
     private Category category;
     @Column(updatable = false)
     private LocalDate created_at;

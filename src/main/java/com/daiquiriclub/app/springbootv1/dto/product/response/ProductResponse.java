@@ -9,6 +9,7 @@ public record ProductResponse(
         String name,
         BigDecimal price,
         int stock,
+        boolean active,
         String category,
         LocalDate created_at,
         LocalDate updated_at
