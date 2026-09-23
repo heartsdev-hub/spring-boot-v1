@@ -2,6 +2,7 @@ package com.daiquiriclub.app.springbootv1.controller;
 
 import com.daiquiriclub.app.springbootv1.dto.ApiResult;
 import com.daiquiriclub.app.springbootv1.dto.product.request.ProductCreateRequest;
+import com.daiquiriclub.app.springbootv1.dto.product.request.ProductPatchRequest;
 import com.daiquiriclub.app.springbootv1.dto.product.request.ProductUpdateRequest;
 import com.daiquiriclub.app.springbootv1.dto.product.response.ProductResponse;
 import com.daiquiriclub.app.springbootv1.service.ProductService;
@@ -28,6 +29,10 @@ public class ProductController {
     public ResponseEntity<ApiResult<List<ProductResponse>>> getActiveProducts(){
         return ResponseEntity.ok(productService.getAllProductsActive());
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResult<ProductResponse>> getByIdProduct(@PathVariable String id){
+        return ResponseEntity.ok(productService.getByIdProduct(id));
+    }
     @PostMapping("/create")
     public ResponseEntity<ApiResult<ProductResponse>> createProduct(@RequestBody @Valid ProductCreateRequest productCreateRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.createProduct(productCreateRequest));
@@ -39,5 +44,9 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResult<Void>> deleteProduct(@PathVariable String id){
         return ResponseEntity.ok(productService.deleteProduct(id));
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<ApiResult<ProductResponse>> patchProduct(@PathVariable String id, @RequestBody ProductPatchRequest productPatchRequest){
+        return ResponseEntity.ok(productService.patchProduct(id,productPatchRequest));
     }
 }

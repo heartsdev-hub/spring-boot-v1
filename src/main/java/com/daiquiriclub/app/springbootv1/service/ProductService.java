@@ -3,6 +3,7 @@ package com.daiquiriclub.app.springbootv1.service;
 import com.daiquiriclub.app.springbootv1.dto.ApiResult;
 import com.daiquiriclub.app.springbootv1.dto.category.request.CategoryUpdateRequest;
 import com.daiquiriclub.app.springbootv1.dto.product.request.ProductCreateRequest;
+import com.daiquiriclub.app.springbootv1.dto.product.request.ProductPatchRequest;
 import com.daiquiriclub.app.springbootv1.dto.product.request.ProductUpdateRequest;
 import com.daiquiriclub.app.springbootv1.dto.product.response.ProductResponse;
 import com.daiquiriclub.app.springbootv1.entity.Category;
@@ -63,8 +64,9 @@ public class ProductService {
         );
         Product product = productMapper.toProduct(productCreateRequest);
         product.setCategory(category);
+        ProductResponse productResponse = productMapper.toProductResponse(productRepository.save(product));
         return new ApiResult<>(
-                true,"Category created", productMapper.toProductResponse(product)
+                true,"Category created", productResponse
         );
     }
     public  ApiResult<ProductResponse> updateProduct(String idProduct, ProductUpdateRequest productUpdateRequest){
@@ -101,5 +103,33 @@ public class ProductService {
         product.setActive(false);
         productRepository.save(product);
         return new ApiResult<>(true,"The product is disabled", null);
+    }
+    public ApiResult<ProductResponse> patchProduct (String productId, ProductPatchRequest productPatchRequest){
+        UUID uuidProduct;
+        try{
+            uuidProduct = UUID.fromString(productId);
+        }catch (IllegalArgumentException e){
+            throw new BadRequestException("UUID invalid");
+        }
+        Product product = productRepository.findById(uuidProduct).orElseThrow(
+                ()-> new ResourceNotFoundException("Product not found")
+        );
+        productMapper.patchProduct(productPatchRequest,product);
+        if(productPatchRequest.categoryId() != null){
+            UUID categoryId;
+            try{
+                categoryId = UUID.fromString(productPatchRequest.categoryId());
+            }catch (IllegalArgumentException e){
+                throw new BadRequestException("UUID invalid");
+            }
+            Category category = categoryRepository.findById(categoryId).orElseThrow(
+                    ()-> new ResourceNotFoundException("Category not found")
+            );
+            product.setCategory(category);
+        }
+        ProductResponse productResponse = productMapper.toProductResponse(productRepository.save(product));
+        return new ApiResult<>(
+                true,"category updated successfully",productResponse
+        );
     }
 }
