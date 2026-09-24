@@ -15,15 +15,15 @@ public interface ProductMapper {
     @Mapping(target = "updated_at",ignore = true)
     Product toProduct (ProductCreateRequest productCreateRequest);
 
-    @Mapping(source = "category.name",target = "category")
-    ProductResponse toProductResponse(Product product);
-
     @Mapping(target = "id",ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "category",ignore = true)
     @Mapping(target = "created_at", ignore = true)
     @Mapping(target = "updated_at", ignore = true)
     void updateProduct(ProductUpdateRequest updateRequest, @MappingTarget Product product);
+
+    @Mapping(source = "category.name",target = "category")
+    ProductResponse toProductResponse(Product product);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id",ignore = true)
