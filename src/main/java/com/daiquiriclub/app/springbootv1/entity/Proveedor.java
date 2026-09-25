@@ -20,6 +20,7 @@ public class Proveedor {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String nombre;
+    @Column(unique = true)
     private String ruc;
     private String telefono;
     @Column(unique = true)
