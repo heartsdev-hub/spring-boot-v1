@@ -1,5 +1,6 @@
 package com.daiquiriclub.app.springbootv1.entity;
 
+import com.daiquiriclub.app.springbootv1.dto.TipoDocumento;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,25 +15,23 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "Proveedor")
-public class Proveedor {
+@Table(name = "usuario")
+public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String nombre;
-    @Column(unique = true)
-    private String ruc;
-    private String telefono;
-    @Column(unique = true)
+    private TipoDocumento tipoDocumento;
+    private String numDocumento;
     private String correo;
-    private String direccion;
+    private String password;
     private boolean active = true;
     @Column(updatable = false)
-    private LocalDate createdAt;
+    private LocalDate createAt;
     private LocalDate updatedAt;
     @PrePersist
     public void onCreate(){
-        this.createdAt = LocalDate.now();
+        this.createAt = LocalDate.now();
         this.updatedAt = LocalDate.now();
     }
     @PreUpdate

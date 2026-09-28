@@ -66,6 +66,12 @@ public class ProveedorService {
         Proveedor proveedor = proveedorRepository.findById(uuid).orElseThrow(
                 ()-> new ResourceNotFoundException("Proveedor not found")
         );
+        if(proveedorRepository.existsRucInAnotherProveedor(proveedorUpdateReques.ruc(), uuid)){
+            throw new ConflictException("El RUC ya pertenece a otro proveedor");
+        }
+        if(proveedorRepository.existsCorreoInAnotherProveedor(proveedorUpdateReques.correo(), uuid)){
+            throw new ConflictException("El CORREO ya pertenece a otro proveedor");
+        }
         proveedorMapper.updateProveedor(proveedorUpdateReques,proveedor);
         proveedorRepository.save(proveedor);
         return new ApiResult<>(true,"proveedor updated", proveedorMapper.toProveedorResponse(proveedor));
