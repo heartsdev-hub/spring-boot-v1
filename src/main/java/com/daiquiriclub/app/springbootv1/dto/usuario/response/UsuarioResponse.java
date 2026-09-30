@@ -11,7 +11,6 @@ public record UsuarioResponse(
         TipoDocumento tipoDocumento,
         String numDocumento,
         String correo,
-        String password,
         boolean active,
         LocalDate createdAt,
         LocalDate updatedAt

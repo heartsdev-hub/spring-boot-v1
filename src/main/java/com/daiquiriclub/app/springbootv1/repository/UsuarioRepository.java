@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
     @Query("""
-    SELECT u FROM usuario u WHERE active= true
+    SELECT u FROM Usuario u WHERE u.active= true
     """)
     List<Usuario> allUsuariosActive();
     boolean existsByCorreo(String correo);

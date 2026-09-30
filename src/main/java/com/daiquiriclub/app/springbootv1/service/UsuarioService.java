@@ -54,7 +54,7 @@ public class UsuarioService {
         UsuarioResponse usuarioResponse = usuarioMapper.toUsuarioResponse(usuarioRepository.save(usuario));
         return new ApiResult<>(true, "usuario agregado", usuarioResponse);
     }
-    public ApiResult<UsuarioResponse> updatedUser(String id, UsuarioUpdateRequest updateRequest){
+    public ApiResult<UsuarioResponse> updatedUser(String id, UsuarioUpdateRequest usuarioUpdateRequest){
         UUID uuid;
         try{
             uuid = UUID.fromString(id);
@@ -62,7 +62,22 @@ public class UsuarioService {
             throw new BadRequestException("UUID invalid");
         }
         Usuario usuario = usuarioRepository.findById(uuid).orElseThrow(()-> new ResourceNotFoundException("Usuario no encontrado"));
-        usuarioMapper.updatedUsuario(updateRequest,usuario);
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        boolean existeNumDocument = usuarios.stream().anyMatch(
+                u -> u.getNumDocumento().equals(usuarioUpdateRequest.numDocumento())
+                        && !u.getId().equals(uuid)
+        );
+        if(existeNumDocument) {
+            throw new ConflictException("El numero de documento ya existe");
+        }
+        boolean existsCorreo = usuarios.stream().anyMatch(
+                c -> c.getCorreo().equals(usuarioUpdateRequest.correo())
+                && !c.getId().equals(uuid)
+        );
+        if(existsCorreo) {
+            throw new ConflictException("El correo ya existe");
+        }
+        usuarioMapper.updatedUsuario(usuarioUpdateRequest,usuario);
         return new ApiResult<>(true,"Usuario actualizado", usuarioMapper.toUsuarioResponse(usuario));
     }
     public ApiResult<Void> deleteUer(String id){

@@ -27,11 +27,11 @@ public class Usuario {
     private String password;
     private boolean active = true;
     @Column(updatable = false)
-    private LocalDate createAt;
+    private LocalDate createdAt;
     private LocalDate updatedAt;
     @PrePersist
     public void onCreate(){
-        this.createAt = LocalDate.now();
+        this.createdAt = LocalDate.now();
         this.updatedAt = LocalDate.now();
     }
     @PreUpdate
