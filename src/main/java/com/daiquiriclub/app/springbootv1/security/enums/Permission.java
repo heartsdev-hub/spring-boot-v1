@@ -1,0 +1,23 @@
+package com.daiquiriclub.app.springbootv1.security.enums;
+
+public enum Permission {
+    CATEGORY_READ,
+    CATEGORY_CREATE,
+    CATEGORY_UPDATE,
+    CATEGORY_DELETE,
+
+    PRODUCT_READ,
+    PRODUCT_CREATE,
+    PRODUCT_UPDATED,
+    PRODUCT_DELETE,
+
+    SUPPLIER__READ,
+    SUPPLIER_CREATE,
+    SUPPLIER_UPDATE,
+    SUPPLIER_DELETE,
+
+    USUARIO_READ,
+    USUARIO_CREATE,
+    USUARIO_UPDATE,
+    USUARIO_DELETE
+}

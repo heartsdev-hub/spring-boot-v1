@@ -19,6 +19,7 @@ public interface UsuarioMapper {
     UsuarioResponse toUsuarioResponse(Usuario usuario);
 
     @Mapping(target = "id",ignore = true)
+    @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt",ignore = true)
     @Mapping(target = "updatedAt",ignore = true)
     void updatedUsuario(UsuarioUpdateRequest updateRequest, @MappingTarget Usuario usuario);

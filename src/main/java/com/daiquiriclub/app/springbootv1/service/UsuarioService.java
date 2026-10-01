@@ -11,6 +11,8 @@ import com.daiquiriclub.app.springbootv1.exception.ConflictException;
 import com.daiquiriclub.app.springbootv1.exception.ResourceNotFoundException;
 import com.daiquiriclub.app.springbootv1.mapper.UsuarioMapper;
 import com.daiquiriclub.app.springbootv1.repository.UsuarioRepository;
+import com.daiquiriclub.app.springbootv1.security.enums.Rol;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -21,10 +23,12 @@ import java.util.UUID;
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper) {
+    public UsuarioService(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.usuarioMapper = usuarioMapper;
+        this.passwordEncoder = passwordEncoder;
     }
     public ApiResult<List<UsuarioResponse>> getAllUsers(){
         List<UsuarioResponse> usuarios = usuarioRepository.findAll().stream().map(usuarioMapper::toUsuarioResponse).toList();
@@ -37,7 +41,7 @@ public class UsuarioService {
     public ApiResult<UsuarioResponse> getByIdUser(String id){
         UUID uuid;
         try{
-            uuid = UUID.fromString(id);
+        uuid = UUID.fromString(id);
         }catch (IllegalArgumentException exception){
             throw new BadRequestException("UUID invalid");
         }
@@ -50,7 +54,15 @@ public class UsuarioService {
        boolean existe = Arrays.stream(TipoDocumento.values()).anyMatch(tipo -> tipo.name().equalsIgnoreCase(usuarioCreateRequest.tipoDocumento().name()));
        if(!existe)
            throw new BadRequestException("Tipo de documento invalido");
+       for(var role : usuarioCreateRequest.roles()){
+           boolean existeRol = Arrays.stream(Rol.values()).anyMatch(
+                   rol -> rol.name().equalsIgnoreCase(role.name())
+           );
+           if(!existeRol)
+               throw new BadRequestException("Rol invalido: " + role.name());
+       }
         Usuario usuario = usuarioMapper.toUsuario(usuarioCreateRequest);
+        usuario.setPassword(passwordEncoder.encode(usuarioCreateRequest.password()));
         UsuarioResponse usuarioResponse = usuarioMapper.toUsuarioResponse(usuarioRepository.save(usuario));
         return new ApiResult<>(true, "usuario agregado", usuarioResponse);
     }
@@ -70,14 +82,22 @@ public class UsuarioService {
         if(existeNumDocument) {
             throw new ConflictException("El numero de documento ya existe");
         }
+        for(var role : usuarioUpdateRequest.roles()){
+            boolean existeRol = Arrays.stream(Rol.values()).anyMatch(
+                    rol -> rol.name().equalsIgnoreCase(role.name())
+            );
+            if(!existeRol)
+                throw new BadRequestException("Rol invalido: " + role.name());
+        }
         boolean existsCorreo = usuarios.stream().anyMatch(
                 c -> c.getCorreo().equals(usuarioUpdateRequest.correo())
                 && !c.getId().equals(uuid)
         );
-        if(existsCorreo) {
+        if(existsCorreo)
             throw new ConflictException("El correo ya existe");
-        }
         usuarioMapper.updatedUsuario(usuarioUpdateRequest,usuario);
+        usuario.setPassword(passwordEncoder.encode(usuarioUpdateRequest.password()));
+        usuarioRepository.save(usuario);
         return new ApiResult<>(true,"Usuario actualizado", usuarioMapper.toUsuarioResponse(usuario));
     }
     public ApiResult<Void> deleteUer(String id){
