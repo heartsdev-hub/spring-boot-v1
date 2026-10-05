@@ -13,6 +13,7 @@ import com.daiquiriclub.app.springbootv1.exception.ResourceNotFoundException;
 import com.daiquiriclub.app.springbootv1.mapper.ProductMapper;
 import com.daiquiriclub.app.springbootv1.repository.CategoryRepository;
 import com.daiquiriclub.app.springbootv1.repository.ProductRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class ProductService {
         this.productMapper = productMapper;
         this.categoryRepository = categoryRepository;
     }
+    @PreAuthorize("hasAuthority('PRODUCT_READ')")
     public ApiResult<List<ProductResponse>> getAllProducts(){
         List<ProductResponse> products =
                 productRepository.findAll().stream().map(
@@ -36,6 +38,7 @@ public class ProductService {
                 ).toList();
         return new ApiResult<>(true, "All Products", products);
     }
+    @PreAuthorize("hasAuthority('PRODUCT_READ_ACTIVE')")
     public ApiResult<List<ProductResponse>> getAllProductsActive(){
         List<ProductResponse> products = productRepository.findByActiveTrue().stream().map(productMapper::toProductResponse).toList();
         return new ApiResult<>(true, "All Products active",products);
@@ -52,6 +55,7 @@ public class ProductService {
         );
         return new ApiResult<>(true, "Product found", productMapper.toProductResponse(product));
     }
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ApiResult<ProductResponse> createProduct (ProductCreateRequest productCreateRequest){
         UUID uuid;
         try{
@@ -69,6 +73,7 @@ public class ProductService {
                 true,"Category created", productResponse
         );
     }
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public  ApiResult<ProductResponse> updateProduct(String idProduct, ProductUpdateRequest productUpdateRequest){
         UUID uuidProduct, uuidCategory;
         try{
@@ -90,6 +95,7 @@ public class ProductService {
         );
         return new ApiResult<>(true,"product updated", productResponse);
     }
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public  ApiResult<Void> deleteProduct(String id){
         UUID uuidProduct;
         try{

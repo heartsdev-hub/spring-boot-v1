@@ -13,12 +13,12 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ApiResult<Void>> handleExceptionHandler(Exception exception){
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResult<>(
-//                false,"Internal Server Error",null
-//        ));
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResult<Void>> handleExceptionHandler(Exception exception){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResult<>(
+                false,"Internal Server Error",null
+        ));
+    }
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiResult<Void>> handleBadRequest(BadRequestException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -44,5 +44,11 @@ public class GlobalExceptionHandler {
                 e -> errors.put(e.getField(),e.getDefaultMessage())
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResult<>(false,"Errors validation",errors));
+    }
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiResult<Void>> handleUnauthorized(UnauthorizedException exception){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+               new ApiResult<>(false,exception.getMessage(),null)
+        );
     }
 }

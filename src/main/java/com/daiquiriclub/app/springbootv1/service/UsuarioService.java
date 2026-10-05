@@ -96,6 +96,9 @@ public class UsuarioService {
         if(existsCorreo)
             throw new ConflictException("El correo ya existe");
         usuarioMapper.updatedUsuario(usuarioUpdateRequest,usuario);
+        if(usuarioUpdateRequest.password() != null && !usuarioUpdateRequest.password().isBlank()){
+            usuario.setPassword(usuarioUpdateRequest.password());
+        }
         usuario.setPassword(passwordEncoder.encode(usuarioUpdateRequest.password()));
         usuarioRepository.save(usuario);
         return new ApiResult<>(true,"Usuario actualizado", usuarioMapper.toUsuarioResponse(usuario));

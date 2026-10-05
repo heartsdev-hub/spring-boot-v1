@@ -32,7 +32,7 @@ public class UsuarioController {
     public ResponseEntity<ApiResult<UsuarioResponse>>getByIdUsuario(@PathVariable String id){
         return ResponseEntity.ok(usuarioService.getByIdUser(id));
     }
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<ApiResult<UsuarioResponse>>createUsuario(@RequestBody @Valid UsuarioCreateRequest usuarioCreateRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.createUsuer(usuarioCreateRequest));
     }

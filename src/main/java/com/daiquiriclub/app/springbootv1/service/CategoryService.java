@@ -10,6 +10,7 @@ import com.daiquiriclub.app.springbootv1.exception.ConflictException;
 import com.daiquiriclub.app.springbootv1.exception.ResourceNotFoundException;
 import com.daiquiriclub.app.springbootv1.mapper.CategoryMapper;
 import com.daiquiriclub.app.springbootv1.repository.CategoryRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class CategoryService {    private final CategoryRepository categoryRepos
         this.categoryRepository = categoryRepository;
         this.categoryMapper = categoryMapper;
     }
+    @PreAuthorize("hasAuthority('CATEGORY_READ')")
     public ApiResult<List<CategoryResponse>> getAllCategories(){
         List<CategoryResponse> categories = categoryRepository.findAll().stream().map(categoryMapper::toCategoryResponse).toList();
         return new ApiResult<>(
@@ -30,10 +32,12 @@ public class CategoryService {    private final CategoryRepository categoryRepos
                 categories
         );
     }
+    @PreAuthorize("hasAuthority('CATEGORY_READ_ACTIVE')")
     public ApiResult<List<CategoryResponse>> getActiveCategories(){
         List<CategoryResponse> categories = categoryRepository.findByActiveTrue().stream().map(categoryMapper::toCategoryResponse).toList();
         return new ApiResult<>(true,"All active categories", categories);
     }
+    @PreAuthorize("hasAuthority('CATEGORY_READ')")
     public ApiResult<CategoryResponse> getByIdCategory(String id){
         UUID uuid;
         try{
@@ -46,6 +50,7 @@ public class CategoryService {    private final CategoryRepository categoryRepos
         );
         return new ApiResult<>(true,"Category Found", categoryMapper.toCategoryResponse(category));
     }
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public  ApiResult<CategoryResponse> createCategory(CategoryCreateRequest categoryCreateRequest){
         String name = categoryCreateRequest.name().trim().toUpperCase();
         if(categoryRepository.existsByName(name)){
@@ -58,6 +63,7 @@ public class CategoryService {    private final CategoryRepository categoryRepos
                 true,"Category created successfully",categoryResponse
         );
     }
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ApiResult<CategoryResponse> updateCategory (String id, CategoryUpdateRequest categoryUpdateRequest){
         UUID uuid;
         try{
@@ -71,6 +77,7 @@ public class CategoryService {    private final CategoryRepository categoryRepos
         categoryMapper.updateCategory(categoryUpdateRequest,category);
         return new ApiResult<>(true,"Category updated",categoryMapper.toCategoryResponse(categoryRepository.save(category)));
     }
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ApiResult<Void> deleteCategory(String id){
         UUID uuid;
         try{
